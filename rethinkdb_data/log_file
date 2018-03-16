@@ -1,0 +1,47 @@
+2018-03-15T23:04:47.945579000 0.672893s notice: Recursively removing directory /Users/Eshu/Documents/Study/college/3rd year/6TH SEM/Python/Flask/NewFinal/rethinkdb_data/tmp
+2018-03-15T23:04:47.947472000 0.674791s notice: Initializing directory /Users/Eshu/Documents/Study/college/3rd year/6TH SEM/Python/Flask/NewFinal/rethinkdb_data
+2018-03-15T23:04:47.947622000 0.674935s info: Creating a default database for your convenience. (This is because you ran 'rethinkdb' without 'create', 'serve', or '--join', and the directory '/Users/Eshu/Documents/Study/college/3rd year/6TH SEM/Python/Flask/NewFinal/rethinkdb_data' did not already exist or is empty.)
+2018-03-15T23:04:47.947668000 0.674981s notice: Running rethinkdb 2.3.6 (CLANG 8.1.0 (clang-802.0.42))...
+2018-03-15T23:04:48.003306000 0.730621s notice: Running on Darwin 15.6.0 x86_64
+2018-03-15T23:04:48.003388000 0.730701s notice: Loading data from directory /Users/Eshu/Documents/Study/college/3rd year/6TH SEM/Python/Flask/NewFinal/rethinkdb_data
+2018-03-15T23:04:48.831632000 1.558999s info: Automatically using cache size of 909 MB
+2018-03-15T23:04:48.832858000 1.560225s notice: Listening for intracluster connections on port 29015
+2018-03-15T23:04:48.835321000 1.562688s notice: Listening for client driver connections on port 28015
+2018-03-15T23:04:48.835496000 1.562863s notice: Listening for administrative HTTP connections on port 8080
+2018-03-15T23:04:48.835501000 1.562868s notice: Listening on cluster addresses: 127.0.0.1, ::1
+2018-03-15T23:04:48.835511000 1.562878s notice: Listening on driver addresses: 127.0.0.1, ::1
+2018-03-15T23:04:48.835515000 1.562882s notice: Listening on http addresses: 127.0.0.1, ::1
+2018-03-15T23:04:48.835524000 1.562891s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2018-03-15T23:04:48.835534000 1.562900s notice: Server ready, "Eshwars_MacBook_Pro_local_m8g" aee70dc9-a06f-470b-910e-c85b3d1cb9b1
+2018-03-15T23:05:17.277251000 30.005373s info: Table 43264f67-9179-40f0-96ed-5a5a48a070e3: Starting a new Raft election for term 1.
+2018-03-15T23:05:17.277733000 30.005855s info: Table 43264f67-9179-40f0-96ed-5a5a48a070e3: Added replica on this server.
+2018-03-15T23:05:17.466558000 30.194680s info: Table 43264f67-9179-40f0-96ed-5a5a48a070e3: This server is Raft leader for term 1. Latest log index is 0.
+2018-03-16T00:03:08.048358000 3503.326645s info: Table a35865fc-8a9b-4cb1-8601-9ab94e9c5f8d: Starting a new Raft election for term 1.
+2018-03-16T00:03:08.048505000 3503.326792s info: Table a35865fc-8a9b-4cb1-8601-9ab94e9c5f8d: Added replica on this server.
+2018-03-16T00:03:08.229019000 3503.507307s info: Table a35865fc-8a9b-4cb1-8601-9ab94e9c5f8d: This server is Raft leader for term 1. Latest log index is 0.
+2018-03-16T00:19:40.085601000 4495.392467s notice: Server got SIGINT from pid 6057, uid 501; shutting down...
+2018-03-16T00:19:40.085777000 4495.392642s notice: Shutting down client connections...
+2018-03-16T00:19:40.137463000 4495.444330s notice: All client connections closed.
+2018-03-16T00:19:40.137508000 4495.444373s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2018-03-16T00:19:40.326849000 4495.633755s notice: Storage engine shut down.
+2018-03-16T00:19:47.499678000 0.008153s notice: Running rethinkdb 2.3.6 (CLANG 8.1.0 (clang-802.0.42))...
+2018-03-16T00:19:47.627331000 0.135802s notice: Running on Darwin 15.6.0 x86_64
+2018-03-16T00:19:47.627403000 0.135873s notice: Loading data from directory /Users/Eshu/Documents/Study/college/3rd year/6TH SEM/Python/Flask/NewFinal/rethinkdb_data
+2018-03-16T00:19:48.021687000 0.530158s info: Automatically using cache size of 227 MB
+2018-03-16T00:19:48.022982000 0.531453s notice: Listening for intracluster connections on port 29015
+2018-03-16T00:19:48.128076000 0.636604s notice: Listening for client driver connections on port 28015
+2018-03-16T00:19:48.128514000 0.637042s notice: Listening for administrative HTTP connections on port 8080
+2018-03-16T00:19:48.128522000 0.637049s notice: Listening on cluster addresses: 127.0.0.1, ::1
+2018-03-16T00:19:48.128528000 0.637055s notice: Listening on driver addresses: 127.0.0.1, ::1
+2018-03-16T00:19:48.128533000 0.637060s notice: Listening on http addresses: 127.0.0.1, ::1
+2018-03-16T00:19:48.128538000 0.637065s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2018-03-16T00:19:48.128564000 0.637091s notice: Server ready, "Eshwars_MacBook_Pro_local_m8g" aee70dc9-a06f-470b-910e-c85b3d1cb9b1
+2018-03-16T00:19:49.449370000 1.957897s info: Table 43264f67-9179-40f0-96ed-5a5a48a070e3: Starting a new Raft election for term 2.
+2018-03-16T00:19:49.454728000 1.963256s info: Table a35865fc-8a9b-4cb1-8601-9ab94e9c5f8d: Starting a new Raft election for term 2.
+2018-03-16T00:19:49.713053000 2.221581s info: Table 43264f67-9179-40f0-96ed-5a5a48a070e3: This server is Raft leader for term 2. Latest log index is 3.
+2018-03-16T00:19:49.813874000 2.322402s info: Table a35865fc-8a9b-4cb1-8601-9ab94e9c5f8d: This server is Raft leader for term 2. Latest log index is 3.
+2018-03-16T00:28:22.392106000 514.915699s notice: Server got SIGINT from pid 6057, uid 501; shutting down...
+2018-03-16T00:28:22.392339000 514.915931s notice: Shutting down client connections...
+2018-03-16T00:28:22.392483000 514.916075s notice: All client connections closed.
+2018-03-16T00:28:22.392492000 514.916084s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2018-03-16T00:28:22.399700000 514.923293s notice: Storage engine shut down.

@@ -7,9 +7,17 @@ import subprocess
 from functools import wraps
 import rethinkdb as r
 import json
-connection=r.connect( "localhost", 28015).repl()
+import smtplib
+server = smtplib.SMTP('smtp.gmail.com', 587)
+server.ehlo()
+server.starttls()
+server.login("codewars2k18@gmail.com", "ullepodude")
+#connection=r.connect( "localhost", 28015).repl()
 # Route for handling the login page logic
 #TODO
+#check mail ids
+#add sms
+#format it
 #login
 #signup->Check CIF check mobile
 #otp
@@ -45,14 +53,19 @@ def start():
 def validatesignup():
     if request.method == 'GET':
         global co
-        co=1111
+        co=71234
+        msg="Your OTP for The Bank is "+str(co)
+        server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
         return render_template('otp.html')
     else:
         otp=request.form['otp']
         otp=int(otp)
         error=None
         if(otp-co==0):
-            return redirect(url_for('credset'))
+            msg="Your User ID for The Bank is "+str()#add the user ID here from DB
+            server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            flash("User ID has been sent to Your Registered Mail ID")
+            return redirect(url_for('login'))
         else:
             error='invalid OTP'
             return render_template('otp.html', error=error)
@@ -85,9 +98,23 @@ def createLogin(uname,password):
         created= False
     connection.close()
     return created
-    
+def foruid(cif,phone,mail):
+    checked=False
+    connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    bank=r.db('bank')
+    customer=bank.table('customer')
+    cif_exists=customer.filter({"cif":cif}).distinct().run(connection)
+    #cif_exists=cif_result['cif']
+    if(cif_exists!=None):
+        for each_cus in cif_exists:
+            if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail):
+                onlineAcc_exists=each_cus['onlineAcc']
+                if(onlineAcc_exists==True):
+                    checked=True
+                else:
+                    checked= False
+    return checked
 
-    
 @app.route('/credset',methods=['GET','POST'])
 def credset():
     if request.method == 'GET':
@@ -128,8 +155,62 @@ def credset():
 
 
 
-            
+@app.route('/otpuid',methods=['GET','POST'])
+def otpuid():
+    if request.method == 'GET':
+        global co
+        co=71234
+        msg="Your OTP for The Bank is "+str(co)
+        #add mobile too
+        server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        return render_template('otp.html')
+    else:
+        otp=request.form['otp']
+        otp=int(otp)
+        error=None
+        if(otp-co==0):
+            server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            return redirect(url_for('login'))
+        else:
+            error='invalid OTP'
+            return render_template('otp.html', error=error)
 
+@app.route('/forgotuid',methods=['GET','POST'])
+def forgotuid():
+    if(request.method=='GET'):
+        return render_template('forgotuid.html')
+    else:
+        cif=request.form['cif']
+        mobile=request.form['mobile']
+        email=request.form['email']
+        error1 = None
+        error2 = None
+        error3 = None
+        if len(cif) == 0:
+            error1 = "CIF cannot be empty"
+        if len(phone) == 0:
+            error2 = "Phone cannot be empty"
+        if len(mail) == 0:
+            error3 = "Email cant be empty"
+        if error1 or error2 or error3:
+            if str(error1) != 'None':
+                flash(error1)
+            if str(error2) != 'None':
+                flash(error2)
+            if str(error3) != 'None':
+                flash(error3)
+            return render_template('forgotuid.html')
+        else:
+            if(foruid(cif,phone,mail) is True ):#include new function to check
+                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID"+)
+                return redirect(url_for('otpuid'))
+            else:
+                error='Mismatch of Details. Please check Your Details'
+                return render_template('forgotuid.html',error=error)
+
+            #include new function for otp old one is not generic
+
+@app.route('/forgotpass',methods=['GET','POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -137,7 +218,7 @@ def index():
         username=session['username']
         return render_template('dashboard.html',username=username)
     global message
-    message='You need to login first2.'
+    message='You need to login first.'
     return redirect(url_for('login'))
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -151,7 +232,7 @@ def login():
         flash(error)
         try:
             user=customer.filter({"username":un}).run(connection)
-            for each in user: 
+            for each in user:
                 if(each['username']!=None):
                     pword=each['password']
                     if pword == passw:

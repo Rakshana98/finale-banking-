@@ -1,4 +1,5 @@
 from flask import Flask, session, render_template, redirect, url_for, request,flash
+from flask import Markup
 import sqlite3
 import random
 import os
@@ -20,30 +21,51 @@ connection=r.connect( "localhost", 28015).repl()
 #dashboard
 USER = None
 USERID = None
-
+message=None
 app = Flask(__name__)
 app.secret_key = 'any random string'
 
 def login_required(f):
     @wraps(f)
-
     def wrap(*args, **kwargs):
         if 'logged_in' in session:
-
             return f(*args, **kwargs)
         else:
-            flash('You need to login first.')
+            global message
+            message='You need to login first.'
             return redirect(url_for('login'))
     return wrap
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def start():
     return render_template('index.html')
+@app.route('/validatesignup',methods=['GET','POST'])
+def validatesignup():
+    if request.method == 'GET':
+        global co
+        co=1111
+        return render_template('otp.html')
+    else:
+        otp=request.form['otp']
+        otp=int(otp)
+        error=None
+        if(otp-co==0):
+            return redirect(url_for('credset'))
+        else:
+            error='invalid OTP'
+            return render_template('otp.html', error=error)
+def checkdetails(cif,phone,mail):
+    return True
+@app.route('/credset',methods=['GET','POST'])
+def credset():
+    return render_template('setpass.html')
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     if 'username' in session:
         username=session['username']
         return render_template('dashboard.html',username=username)
+    global message
+    message='You need to login first2.'
     return redirect(url_for('login'))
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -66,10 +88,14 @@ def login():
         except Exception as e:
             print (str(e))
             error = 'Invalid Credentials. Please try again.'
+    if message:
+        flash(message)
     return render_template('login.html', error=error)
 @app.route('/logout')
 @login_required
 def logout():
+    global message
+    message=None
     session.pop('username', None)
     return redirect(url_for('index'))
 
@@ -77,51 +103,39 @@ def logout():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-    if request.method == 'GET' or request.method == 'POST':
-        flash("heyeyey")
+    if request.method == 'GET':
         return render_template('signup.html')
     else:
-        email = request.form['email']
-        username = request.form['usename']
-        name=request.form['name']
-        pword = request.form['password']
-        accno=request.form['accno']
-        phno=request.form['phno']
+        cif = request.form['cif']
+        phone = request.form['mobile']
+        mail=request.form['email']
         error1 = None
         error2 = None
         error3 = None
-        error4 = None
-        error5 = None
-        if len(username) == 0:
-            error2 = "UserName cannot be empty"
-        if len(name) == 0:
-            error3 = "Name cannot be empty"
-        if len(pword) <= 5:
-            error4 = "Password must be more than 5 characters long"
-        if len(phno) != 0:
-            error5="phone number invalid"
-        if error1 or error2 or error3 or error4 or error5:
+        if len(cif) == 0:
+            error1 = "CIF cannot be empty"
+        if len(phone) == 0:
+            error2 = "Phone cannot be empty"
+        if len(mail) == 0:
+            error3 = "Email cant be empty"
+        if error1 or error2 or error3:
             if str(error1) != 'None':
                 flash(error1)
             if str(error2) != 'None':
                 flash(error2)
             if str(error3) != 'None':
                 flash(error3)
-            if str(error4) != 'None':
-                flash(error4)
-            if str(error5) !='None':
-                flash(error5)
             return render_template('signup.html')
         else:
-            newCustomer(email, username, name, pword,accno,phno)
-            flash("Account created! You can now login with your new credentials.")
-            return redirect(url_for('login'))
-def newCustomer(email, username, name, pword,accno,phno):
-    c.execute("insert into login(uid,password) values(?,?)",
-              (phno,pword))
-    c.execute("insert into userlogin values(?,?,?)", (email, pword, custid))
-    conn.commit()
+            if(checkdetails(cif,phone,mail) is True):
+                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10])
+                return redirect(url_for('validatesignup'))
+            else:
+                error='Mismatch of Details Please check Your Details'
+                return render_template('signup.html',error=error)
+
+
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run()

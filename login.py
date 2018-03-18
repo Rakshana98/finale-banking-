@@ -1,5 +1,7 @@
 from flask import Flask, session, render_template, redirect, url_for, request,flash
 from flask import Markup
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
 import sqlite3
 import random
 import os
@@ -89,13 +91,22 @@ def checkdetails(cif,phone,mail):
 def createLogin(uname,password):
     created=False
     connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
     bank=r.db('bank')
     customer=bank.table('customer')
-    customer.filter(r.row["cif"]==cif).update({'username':uname,'password':password,'onlineAcc':True}).run(connection)
-    if(customer.filter({"cif":cif}).pluck('onlineAcc').run(connection)==True):
-        created= True
-    else:
-        created= False
+    b=password.encode('utf-8')
+    digest.update(b)
+    hashedpw=digest.finalize()
+    #print(str(hashedpw))
+    customer.filter(r.row["cif"]==cif).update({'username':uname,'password':r.binary(hashedpw),'onlineAcc':True}).run(connection)
+    customer.sync().run(connection)
+    check=customer.filter({"cif":cif}).pluck('onlineAcc').run(connection)
+    for each in check:
+        if(each['onlineAcc']==True):
+            created= True
+        else:
+            created= False
+    print(created)
     connection.close()
     return created
 def foruid(cif,phone,mail):
@@ -227,15 +238,19 @@ def login():
     customer=bank.table('customer')
     error = None
     if request.method == 'POST':
+        digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
         un=request.form['username']
         passw=request.form['pass']
         flash(error)
         try:
             user=customer.filter({"username":un}).run(connection)
-            for each in user:
+            for each in user: 
                 if(each['username']!=None):
+                    b=passw.encode('utf-8')
+                    digest.update(b)
+                    hashedpw=digest.finalize()
                     pword=each['password']
-                    if pword == passw:
+                    if pword == hashedpw:
                         session['logged_in'] = True
                         global USER
                         USER = un

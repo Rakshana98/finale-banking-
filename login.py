@@ -222,6 +222,99 @@ def forgotuid():
             #include new function for otp old one is not generic
 
 @app.route('/forgotpass',methods=['GET','POST'])
+def forgotpass():
+    if request.method=='GET':
+        return render_template('forgotpass.html')
+    else:
+        userid=request.form['userid']
+        cif=request.form['cif']
+        mobile=request.form['mobile']
+        email=request.form['email']
+        error1 = None
+        error2 = None
+        error3 = None
+        error4 = None
+        if len(userid) == 0:
+            error1 ="User ID cannot be empty"
+        if len(cif) == 0:
+            error2 = "CIF cannot be empty"
+        if len(phone) == 0:
+            error3 = "Phone cannot be empty"
+        if len(mail) == 0:
+            error4 = "Email cant be empty"
+        if error1 or error2 or error3 or error4:
+            if str(error1) != 'None':
+                flash(error1)
+            if str(error2) != 'None':
+                flash(error2)
+            if str(error3) != 'None':
+                flash(error3)
+            if str(error4) != 'None':
+                flash(error4)
+            return render_template('forgotpass.html')
+        else:
+            if(forpass(userid,cif,phone,mail) is True ):#include new function to check
+                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID"+)
+                return redirect(url_for('otppass'))
+            else:
+                error='Mismatch of Details. Please check Your Details'
+                return render_template('forgotpass.html',error=error)
+def forpass(userid,cif,phone,mail):
+    #check db work return true or false
+@app.route('/otppass',methods=['POST','GET'])
+def otppass():
+    if request.method=='GET':
+        global co
+        co=71234
+        msg="Your OTP for The Bank is "+str(co)
+        #add mobile too
+        server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        return render_template('otp.html')
+    else:
+        otp=request.form['otp']
+        otp=int(otp)
+        error=None
+        if(otp-co==0):
+            #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            return redirect(url_for('changepass'))
+        else:
+            error='invalid OTP'
+            return render_template('otp.html', error=error)
+@app.route('/changepass',methods=['POST','GET'])
+def changepass():
+    if request.method=='GET':
+        return render_template('changepass.html')
+    else:
+        password = request.form['pass']
+        conf_pass=request.form['conf_pass']
+        error1 = None
+        error2 = None
+        error3 = None
+        if len(password) == 0:
+            error1 = "Password cannot be empty"
+        if len(conf_pass) == 0:
+            error2 = "Confirm password cant be empty"
+        if (password!=conf_pass):
+            error3="Passwords dont match"
+        if error1 or error2 or error3:
+            if str(error1) != 'None':
+                flash(error1)
+            if str(error2) != 'None':
+                flash(error2)
+            if str(error3) != 'None':
+                flash(error3)
+            return render_template('changepass.html')
+        else:
+
+            #db work need new function or existing is enough?
+            flash('Password successfully resetted. Your can login Now')
+            return redirect(url_for('login'))
+            else:
+                error='Mismatch of Details or Account already exists. Please check Your Details'
+                return render_template('setpass.html',error=error)
+
+
+
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -244,7 +337,7 @@ def login():
         flash(error)
         try:
             user=customer.filter({"username":un}).run(connection)
-            for each in user: 
+            for each in user:
                 if(each['username']!=None):
                     b=passw.encode('utf-8')
                     digest.update(b)

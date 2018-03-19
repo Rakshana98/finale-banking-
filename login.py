@@ -346,16 +346,13 @@ def login():
         digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
         un=request.form['username']
         passw=request.form['pass']
+        i=0
         #flash(error)
         try:
             user=customer.filter({"username":un}).run(connection)
             for each in user:
-                if 'username' not in each:
-                    error='Invalid User name!'
-                    flash(error)
-                    return render_template('login.html', error=error)
                 if(each['username']!=None):
-                    print(each['username'])
+                    i=1
                     b=passw.encode('utf-8')
                     digest.update(b)
                     hashedpw=digest.finalize()
@@ -367,13 +364,17 @@ def login():
                         session['username'] = un
                         return redirect(url_for('index'))
                     else:
-                        error='Invalid Credentials. Please try again'
+                        error='Invalid Password. Please try again'
                         flash(error)
                         return render_template('login.html', error=error)
                 else:
-                    error = 'Invalid Credentials. Please try again.'
+                    error = 'Invalid Credentials2. Please try again.'
                     flash(error)
                     return render_template('login.html', error=error)
+            if(i==0):
+                error="Invalid User ID"
+                flash(error)
+                return render_template('login.html',error=error)
         except Exception as e:
             #print (str(e))
             error = 'Invalid Credentials. Please try again.'

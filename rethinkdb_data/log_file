@@ -69,3 +69,8 @@
 2018-03-17T20:55:42.396403000 792.146402s notice: All client connections closed.
 2018-03-17T20:55:42.396439000 792.146439s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
 2018-03-17T20:55:42.405050000 792.155050s notice: Storage engine shut down.
+2018-03-19T20:15:26.434185000 0.277774s notice: Running rethinkdb 2.3.6 (CLANG 8.1.0 (clang-802.0.42))...
+2018-03-19T20:15:26.648135000 0.491661s notice: Running on Darwin 15.6.0 x86_64
+2018-03-19T20:15:26.648216000 0.491741s notice: Loading data from directory /Users/Eshu/BankingOnline/rethinkdb_data
+2018-03-19T20:15:27.059546000 0.903072s info: Automatically using cache size of 1570 MB
+2018-03-19T20:15:27.060631000 0.904155s error: TCP socket creation failed for port 29015: Address already in use.

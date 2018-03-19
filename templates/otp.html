@@ -26,8 +26,15 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/util.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
 <!--===============================================================================================-->
+<script type="text/javascript">
+window.history.forward();
+function noback(){window.history.forward();}
+</script>
 </head>
-<body>
+
+<body onload="noback();"
+onpageshow="if (event.persisted) noback();"onunload="">
+
 
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('../static/images/bg-01.jpg');">

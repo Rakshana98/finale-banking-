@@ -30,7 +30,9 @@ server.login("codewars2k18@gmail.com", "ullepodude")
 #Accounts
 #dashboard
 USER = None
-USERID = None
+#USERID = None
+mail=None
+phone=None
 message=None
 RDB_HOST =  'localhost'
 RDB_PORT = 28015
@@ -38,6 +40,14 @@ cif = None
 app = Flask(__name__)
 app.secret_key = 'any random string'
 
+def getmail():
+    #function to set global variable mail from db
+    global mail
+    mail=None
+def getphone():
+    #function to set global variable phone from db
+    global phone
+    phone=None
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -64,10 +74,10 @@ def validatesignup():
         otp=int(otp)
         error=None
         if(otp-co==0):
-            msg="Your User ID for The Bank is "+str()#add the user ID here from DB
-            server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
-            flash("User ID has been sent to Your Registered Mail ID")
-            return redirect(url_for('login'))
+            #msg="Your User ID for The Bank is "+str()#add the user ID here from DB
+            #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            #flash("User ID has been sent to Your Registered Mail ID")
+            return redirect(url_for('credset'))
         else:
             error='invalid OTP'
             return render_template('otp.html', error=error)
@@ -121,6 +131,7 @@ def foruid(cif,phone,mail):
             if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail):
                 onlineAcc_exists=each_cus['onlineAcc']
                 if(onlineAcc_exists==True):
+                    session['mailid']=mail
                     checked=True
                 else:
                     checked= False
@@ -180,6 +191,7 @@ def otpuid():
         otp=int(otp)
         error=None
         if(otp-co==0):
+            #send your userid from DB
             server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
             return redirect(url_for('login'))
         else:
@@ -213,7 +225,7 @@ def forgotuid():
             return render_template('forgotuid.html')
         else:
             if(foruid(cif,phone,mail) is True ):#include new function to check
-                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID"+)
+                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID")
                 return redirect(url_for('otpuid'))
             else:
                 error='Mismatch of Details. Please check Your Details'
@@ -236,10 +248,10 @@ def forgotpass():
         error4 = None
         if len(userid) == 0:
             error1 ="User ID cannot be empty"
-        if len(cif) == 0:
-            error2 = "CIF cannot be empty"
-        if len(phone) == 0:
-            error3 = "Phone cannot be empty"
+        if len(cif) != 10:
+            error2 = "Invalid CIF"
+        if len(phone) != 10:
+            error3 = "Invalid Phone Number"
         if len(mail) == 0:
             error4 = "Email cant be empty"
         if error1 or error2 or error3 or error4:
@@ -254,12 +266,13 @@ def forgotpass():
             return render_template('forgotpass.html')
         else:
             if(forpass(userid,cif,phone,mail) is True ):#include new function to check
-                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID"+)
+                flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID")
                 return redirect(url_for('otppass'))
             else:
                 error='Mismatch of Details. Please check Your Details'
                 return render_template('forgotpass.html',error=error)
 def forpass(userid,cif,phone,mail):
+    return True
     #check db work return true or false
 @app.route('/otppass',methods=['POST','GET'])
 def otppass():
@@ -304,14 +317,13 @@ def changepass():
             if str(error3) != 'None':
                 flash(error3)
             return render_template('changepass.html')
-        else:
-
-            #db work need new function or existing is enough?
-            flash('Password successfully resetted. Your can login Now')
-            return redirect(url_for('login'))
+        else:#remove this
+            if(True):
+                flash('Password successfully resetted. Your can login Now')
+                return redirect(url_for('login'))
             else:
                 error='Mismatch of Details or Account already exists. Please check Your Details'
-                return render_template('setpass.html',error=error)
+                return render_template('changepass.html',error=error)
 
 
 
@@ -334,11 +346,16 @@ def login():
         digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
         un=request.form['username']
         passw=request.form['pass']
-        flash(error)
+        #flash(error)
         try:
             user=customer.filter({"username":un}).run(connection)
             for each in user:
+                if 'username' not in each:
+                    error='Invalid User name!'
+                    flash(error)
+                    return render_template('login.html', error=error)
                 if(each['username']!=None):
+                    print(each['username'])
                     b=passw.encode('utf-8')
                     digest.update(b)
                     hashedpw=digest.finalize()
@@ -350,16 +367,16 @@ def login():
                         session['username'] = un
                         return redirect(url_for('index'))
                     else:
-                        error='Invalid Credentials1. Please try again'
+                        error='Invalid Credentials. Please try again'
                         flash(error)
                         return render_template('login.html', error=error)
                 else:
-                    error = 'Invalid Credentials2. Please try again.'
+                    error = 'Invalid Credentials. Please try again.'
                     flash(error)
                     return render_template('login.html', error=error)
         except Exception as e:
-            print (str(e))
-            error = 'Invalid Credentials3. Please try again.'
+            #print (str(e))
+            error = 'Invalid Credentials. Please try again.'
             flash(error)
             return render_template('login.html', error=error)
     #if message:

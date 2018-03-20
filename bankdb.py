@@ -1,10 +1,10 @@
 import rethinkdb as r
 connection=r.connect( "localhost", 28015).repl()
-'''r.db_drop('bank').run()
+r.db_drop('bank').run()
 r.db_create('bank').run()
-'''
+
 bank=r.db('bank')
-'''customer=bank.table('customer')
+customer=bank.table('customer')
 r.db('bank').table_create('customer',primary_key='cif').run()
 r.db('bank').table('customer').insert([
     {
@@ -74,7 +74,7 @@ customer.sync().run()
 print(r.db('bank').table('customer').run())
 checked=False
 #connection = r.connect(host=localhost, port=RDB_PORT)
-bank=r.db('bank')'''
+bank=r.db('bank')
 customer=bank.table('customer')
 phone='9655496644'
 mail='rakshanadevi98@gmail.com'
@@ -93,4 +93,4 @@ if(cif_exists!=None):
                     print("True check",checked)
             else:
                     checked= False
-print( checked)'''
+print( checked)

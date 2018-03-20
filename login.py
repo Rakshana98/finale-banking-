@@ -1,5 +1,6 @@
-from flask import Flask, session, render_template, redirect, url_for, request,flash
+from flask import Flask, session, render_template, redirect, url_for, request,flash,abort
 from flask import Markup
+from rethinkdb.errors import RqlRuntimeError,RqlDriverError
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 import sqlite3
@@ -31,23 +32,32 @@ server.login("codewars2k18@gmail.com", "ullepodude")
 #dashboard
 USER = None
 #USERID = None
-mail=None
-phone=None
-message=None
 RDB_HOST =  'localhost'
 RDB_PORT = 28015
 cif = None
 app = Flask(__name__)
 app.secret_key = 'any random string'
+connection=None
+# open connection before each request
+@app.before_request
+def before_request():
+    try:
+        global connection
+        connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+        bank=r.db('bank')
+        customer=bank.table('customer')
+    
+    except RqlDriverError:
+        abort(503, "Database connection could be established.")
 
-def getmail():
-    #function to set global variable mail from db
-    global mail
-    mail=None
-def getphone():
-    #function to set global variable phone from db
-    global phone
-    phone=None
+# close the connection after each request
+@app.teardown_request
+def teardown_request(exception):
+    try:
+        connection.close()
+    except AttributeError:
+        pass
+
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -83,7 +93,7 @@ def validatesignup():
             return render_template('otp.html', error=error)
 def checkdetails(cif,phone,mail):
     checked=False
-    connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
     bank=r.db('bank')
     customer=bank.table('customer')
     cif_exists=customer.filter({"cif":cif}).distinct().run(connection)
@@ -100,15 +110,15 @@ def checkdetails(cif,phone,mail):
 
 def createLogin(uname,password):
     created=False
-    connection = r.connect(host=RDB_HOST, port=RDB_PORT)
-    digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    #digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
     bank=r.db('bank')
     customer=bank.table('customer')
-    b=password.encode('utf-8')
-    digest.update(b)
-    hashedpw=digest.finalize()
+    #b=password.encode('utf-8')
+    #digest.update(b)
+    #hashedpw=digest.finalize()
     #print(str(hashedpw))
-    customer.filter(r.row["cif"]==cif).update({'username':uname,'password':r.binary(hashedpw),'onlineAcc':True}).run(connection)
+    customer.filter(r.row["cif"]==cif).update({'username':uname,'password':password,'onlineAcc':True}).run(connection)
     customer.sync().run(connection)
     check=customer.filter({"cif":cif}).pluck('onlineAcc').run(connection)
     for each in check:
@@ -117,11 +127,11 @@ def createLogin(uname,password):
         else:
             created= False
     print(created)
-    connection.close()
+    #connection.close()
     return created
 def foruid(cif,phone,mail):
     checked=False
-    connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
     bank=r.db('bank')
     customer=bank.table('customer')
     cif_exists=customer.filter({"cif":cif}).distinct().run(connection)
@@ -175,7 +185,15 @@ def credset():
                 error='Mismatch of Details or Account already exists. Please check Your Details'
                 return render_template('setpass.html',error=error)
 
-
+def getUnameByCif(cif):
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    bank=r.db('bank')
+    customer=bank.table('customer')
+    uname=customer.filter({'cif':cif}).pluck('username').run(connection)
+    for each in uname:
+        username=each['username']
+    return username
+    
 
 @app.route('/otpuid',methods=['GET','POST'])
 def otpuid():
@@ -183,16 +201,24 @@ def otpuid():
         global co
         co=71234
         msg="Your OTP for The Bank is "+str(co)
+        mail=request.args.get('mail')
+        phone=request.args.get('phone')
         #add mobile too
-        server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
         return render_template('otp.html')
     else:
         otp=request.form['otp']
         otp=int(otp)
         error=None
         if(otp-co==0):
+            cif=request.args.get('cif')
+            mail=request.args.get('mail')
+            phone=request.args.get('phone')
+            username=getUnameByCif(cif)
             #send your userid from DB
-            server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            msg="Your User ID is "+username
+            flash(msg)                          #remove flash
+            #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
             return redirect(url_for('login'))
         else:
             error='invalid OTP'
@@ -204,8 +230,8 @@ def forgotuid():
         return render_template('forgotuid.html')
     else:
         cif=request.form['cif']
-        mobile=request.form['mobile']
-        email=request.form['email']
+        phone=request.form['mobile']
+        mail=request.form['email']
         error1 = None
         error2 = None
         error3 = None
@@ -226,7 +252,7 @@ def forgotuid():
         else:
             if(foruid(cif,phone,mail) is True ):#include new function to check
                 flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID")
-                return redirect(url_for('otpuid'))
+                return redirect(url_for('otpuid',mail=mail,phone=phone,cif=cif))
             else:
                 error='Mismatch of Details. Please check Your Details'
                 return render_template('forgotuid.html',error=error)
@@ -240,8 +266,8 @@ def forgotpass():
     else:
         userid=request.form['userid']
         cif=request.form['cif']
-        mobile=request.form['mobile']
-        email=request.form['email']
+        phone=request.form['mobile']
+        mail=request.form['email']
         error1 = None
         error2 = None
         error3 = None
@@ -267,12 +293,26 @@ def forgotpass():
         else:
             if(forpass(userid,cif,phone,mail) is True ):#include new function to check
                 flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID")
-                return redirect(url_for('otppass'))
+                return redirect(url_for('otppass',userid=userid))
             else:
                 error='Mismatch of Details. Please check Your Details'
                 return render_template('forgotpass.html',error=error)
 def forpass(userid,cif,phone,mail):
-    return True
+    checked=False
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    bank=r.db('bank')
+    customer=bank.table('customer')
+    cif_exists=customer.filter({"cif":cif}).distinct().run(connection)
+    #cif_exists=cif_result['cif']
+    if(cif_exists!=None):
+        for each_cus in cif_exists:
+            if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail and each_cus['username']==userid):
+                onlineAcc_exists=each_cus['onlineAcc']
+                if(onlineAcc_exists==True):
+                    checked=True
+                else:
+                    checked= False
+    return checked
     #check db work return true or false
 @app.route('/otppass',methods=['POST','GET'])
 def otppass():
@@ -281,18 +321,44 @@ def otppass():
         co=71234
         msg="Your OTP for The Bank is "+str(co)
         #add mobile too
-        server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
         return render_template('otp.html')
     else:
         otp=request.form['otp']
         otp=int(otp)
         error=None
         if(otp-co==0):
+            userid=request.args.get('userid')
             #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
-            return redirect(url_for('changepass'))
+            return redirect(url_for('changepass',userid=userid))
         else:
             error='invalid OTP'
             return render_template('otp.html', error=error)
+def changepword(uname,pword):
+    changed=False
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    #digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+    bank=r.db('bank')
+    customer=bank.table('customer')
+    #ins_pw=pword
+    #b=ins_pw.encode('utf-8')
+    #digest.update(b)
+    #hashedpw=digest.finalize()
+    check_ins=customer.filter(r.row["username"]==uname).update({'password':pword}).run(connection)
+    check_pw=customer.filter({"username":uname}).pluck('password').run(connection)
+    print(check_pw)
+    for each in check_pw:
+        print(each)
+        print(each['password'],check_ins['replaced'])
+        if(each['password']==pword and check_ins['replaced']==1 ):
+            changed=True
+        else:
+            changed=False
+    customer.sync().run(connection)
+    #connection.close()
+    print(changed)
+    return changed
+
 @app.route('/changepass',methods=['POST','GET'])
 def changepass():
     if request.method=='GET':
@@ -318,7 +384,8 @@ def changepass():
                 flash(error3)
             return render_template('changepass.html')
         else:#remove this
-            if(True):
+            uname=request.args.get('userid')
+            if(changepword(uname,password) is True):
                 flash('Password successfully resetted. Your can login Now')
                 return redirect(url_for('login'))
             else:
@@ -338,12 +405,12 @@ def index():
     return redirect(url_for('login'))
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    connection = r.connect(host=RDB_HOST, port=RDB_PORT)
+    #connection = r.connect(host=RDB_HOST, port=RDB_PORT)
     bank=r.db('bank')
     customer=bank.table('customer')
     error = None
     if request.method == 'POST':
-        digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        #digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
         un=request.form['username']
         passw=request.form['pass']
         i=0
@@ -353,11 +420,11 @@ def login():
             for each in user:
                 if(each['username']!=None):
                     i=1
-                    b=passw.encode('utf-8')
-                    digest.update(b)
-                    hashedpw=digest.finalize()
+                    #b=passw.encode('utf-8')
+                    #digest.update(b)
+                    #hashedpw=digest.finalize()
                     pword=each['password']
-                    if pword == hashedpw:
+                    if pword == passw:
                         session['logged_in'] = True
                         global USER
                         USER = un

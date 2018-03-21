@@ -21,12 +21,12 @@ server.login("codewars2k18@gmail.com", "ullepodude")
 #check mail ids
 #add sms
 #format it
-#login
-#signup->Check CIF check mobile
-#otp
-#forgot Password
-#forgot ID
-#logout
+#login#
+#signup#
+#otp#
+#forgot Password#
+#forgot ID#
+#logout#
 #profile
 #Accounts
 #dashboard
@@ -36,7 +36,7 @@ RDB_HOST =  'localhost'
 RDB_PORT = 28015
 cif = None
 app = Flask(__name__)
-app.secret_key = 'any random string'
+app.secret_key = 'banking daww'
 connection=None
 # open connection before each request
 @app.before_request
@@ -46,7 +46,7 @@ def before_request():
         connection = r.connect(host=RDB_HOST, port=RDB_PORT)
         bank=r.db('bank')
         customer=bank.table('customer')
-    
+
     except RqlDriverError:
         abort(503, "Database connection could be established.")
 
@@ -193,7 +193,7 @@ def getUnameByCif(cif):
     for each in uname:
         username=each['username']
     return username
-    
+
 
 @app.route('/otpuid',methods=['GET','POST'])
 def otpuid():
@@ -399,7 +399,7 @@ def changepass():
 def index():
     if 'username' in session:
         username=session['username']
-        return render_template('dashboard.html',username=username)
+        return render_template('dash2.html',username=username)
     global message
     message='You need to login first.'
     return redirect(url_for('login'))
@@ -458,8 +458,6 @@ def logout():
     message=None
     session.pop('username', None)
     return redirect(url_for('index'))
-
-
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():

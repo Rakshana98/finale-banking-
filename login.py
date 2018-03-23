@@ -44,7 +44,7 @@ def before_request():
     try:
         global connection
         connection = r.connect(host=RDB_HOST, port=RDB_PORT)
-        
+
     except RqlDriverError:
         abort(503, "Database connection could be established.")
 
@@ -293,7 +293,7 @@ def forgotpass():
         else:
             if(forpass(userid,cif,phone,mail) is True ):#include new function to check
                 flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10]+"and to your Registered Mail ID")
-                return redirect(url_for('otppass',userid=userid))
+                return redirect(url_for('otppass',userid=userid,mail=mail,phone=phone))
             else:
                 error='Mismatch of Details. Please check Your Details'
                 return render_template('forgotpass.html',error=error)
@@ -397,6 +397,23 @@ def changepass():
                 return render_template('changepass.html',error=error)
 
 
+@app.route('/editprof', methods=['GET', 'POST'])
+@login_required
+def editprof():
+    if request.method=='POST':
+        #update Database
+        return redirect(url_for('profile'))
+    else:
+        return render_template('editprof.html')
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method=='GET':
+        #db get data
+        return render_template('profile.html')
+    else:
+        return redirect(url_for('editprof'))
 
 @app.route('/index', methods=['GET', 'POST'])
 @login_required

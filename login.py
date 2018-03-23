@@ -44,9 +44,7 @@ def before_request():
     try:
         global connection
         connection = r.connect(host=RDB_HOST, port=RDB_PORT)
-        bank=r.db('bank')
-        customer=bank.table('customer')
-
+        
     except RqlDriverError:
         abort(503, "Database connection could be established.")
 
@@ -77,7 +75,10 @@ def validatesignup():
         global co
         co=71234
         msg="Your OTP for The Bank is "+str(co)
-        server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        mail=request.args.get('mail')
+        phone=request.args.get('phone')
+        #add otp sending to phone code
+        server.sendmail("codewars2k18@gmail.com", mail, msg)
         return render_template('otp.html')
     else:
         otp=request.form['otp']
@@ -204,7 +205,7 @@ def otpuid():
         mail=request.args.get('mail')
         phone=request.args.get('phone')
         #add mobile too
-        #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        server.sendmail("codewars2k18@gmail.com", mail, msg)
         return render_template('otp.html')
     else:
         otp=request.form['otp']
@@ -215,10 +216,9 @@ def otpuid():
             mail=request.args.get('mail')
             phone=request.args.get('phone')
             username=getUnameByCif(cif)
-            #send your userid from DB
             msg="Your User ID is "+username
             flash(msg)                          #remove flash
-            #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            server.sendmail("codewars2k18@gmail.com", mail, msg)
             return redirect(url_for('login'))
         else:
             error='invalid OTP'
@@ -320,8 +320,10 @@ def otppass():
         global co
         co=71234
         msg="Your OTP for The Bank is "+str(co)
+        mail=request.args.get('mail')
+        phone=request.args.get('phone')
         #add mobile too
-        #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+        server.sendmail("codewars2k18@gmail.com", mail, msg)
         return render_template('otp.html')
     else:
         otp=request.form['otp']
@@ -329,7 +331,9 @@ def otppass():
         error=None
         if(otp-co==0):
             userid=request.args.get('userid')
-            #server.sendmail("codewars2k18@gmail.com", "eshwar.muthusamy7@gmail.com", msg)
+            msg="ALERT! Your account password is being changed."
+            mail=request.args.get('mail')
+            server.sendmail("codewars2k18@gmail.com", mail, msg)
             return redirect(url_for('changepass',userid=userid))
         else:
             error='invalid OTP'
@@ -346,7 +350,7 @@ def changepword(uname,pword):
     #hashedpw=digest.finalize()
     check_ins=customer.filter(r.row["username"]==uname).update({'password':pword}).run(connection)
     check_pw=customer.filter({"username":uname}).pluck('password').run(connection)
-    print(check_pw)
+    #print(check_pw)
     for each in check_pw:
         print(each)
         print(each['password'],check_ins['replaced'])
@@ -356,7 +360,7 @@ def changepword(uname,pword):
             changed=False
     customer.sync().run(connection)
     #connection.close()
-    print(changed)
+    #print(changed)
     return changed
 
 @app.route('/changepass',methods=['POST','GET'])
@@ -488,7 +492,7 @@ def signup():
         else:
             if(checkdetails(cif,phone,mail) is True):
                 flash("Please enter the OTP sent to "+phone[0:2]+"XXXXXX"+phone[8:10])
-                return redirect(url_for('validatesignup'))
+                return redirect(url_for('validatesignup',mail=mail,phone=phone))
             else:
                 error='Mismatch of Details or Account already exists. Please check Your Details'
                 return render_template('signup.html',error=error)

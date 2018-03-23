@@ -1,11 +1,11 @@
 import rethinkdb as r
 connection=r.connect( "localhost", 28015).repl()
-#r.db_drop('bank').run()
-#r.db_create('bank').run()
+r.db_drop('bank').run()
+r.db_create('bank').run()
 
 bank=r.db('bank')
 customer=bank.table('customer')
-'''r.db('bank').table_create('customer',primary_key='cif').run()
+r.db('bank').table_create('customer',primary_key='cif').run()
 r.db('bank').table('customer').insert([
     {
         'onlineAcc': False,
@@ -30,7 +30,7 @@ r.db('bank').table('customer').insert([
 	 'pan':'AAAPL1234D',#10 characters
  	'cname':'Eshu Diamond',
         'contact':[
-            {'email':'eshwarmuthusamy7@gmail.com','mobile':'8072106807'}
+            {'email':'eshwar.muthusamy7@gmail.com','mobile':'8072106807'}
         ],
         'cif':'6000000502', #format-10 digits long
         'account':[
@@ -47,7 +47,7 @@ r.db('bank').table('customer').insert([
 	'pan':'AAAPL1234E',
  	'cname':'Deepak Vengatesh',
         'contact':[
-            {'email':'drdeepakvengy@gmail.com','mobile':'7358758342'}
+            {'email':'drdeepakvenky@gmail.com','mobile':'7358758342'}
         ],
         'cif':'6000000503', #format-10 digits long
         'account':[
@@ -61,9 +61,9 @@ r.db('bank').table('customer').insert([
         #'username':None,
         #'password': None,
 	'pan':'AAAPL1234R',
- 	'cname':'Mukesh',
+ 	'cname':'Dharaa',
         'contact':[
-            {'email':'tigerchase@gmail.com','mobile':'9487316200'}
+            {'email':'rcdharaa@gmail.com','mobile':'9445155377'}
         ],
         'cif':'6000000504', #format-10 digits long
         'account':[{'number':'12345678908','type':'Savings','balance':75000,'minlimit':2000,'debitcardno':4547500235982549,'branch':'AnnaNagar','ifsc':'IBOB0021094','transaction':[{'date':'04/08/2017','toacc':'12345678903','amt':2000},{'date':'05/11/2017','toacc':'12345678901','amt':5000},{'date':'','fromacc':'12345678903','amt':10000 }]}] #format-11 digits long, starting with 1,2 or 3
@@ -74,9 +74,9 @@ r.db('bank').table('customer').insert([
         #'username':None,
         #'password': None,
 	'pan':'AAAPL1234W',
- 	'cname':'Chandler',
+ 	'cname':'Janani',
         'contact':[
-            {'email':'chandlerbing@gmail.com','mobile':'7502412333'}
+            {'email':'kumarakrishnanjanani@gmail.com','mobile':'9884088715'}
         ],
         'cif':'6000000505', #format-10 digits long
         'account':
@@ -84,10 +84,25 @@ r.db('bank').table('customer').insert([
   'transaction':[{'date':'','toacc':'12345678906','amt':2000},{'date':'','toacc':'12345678901','amt':5000}]}]
 
          #format-11 digits long, starting with 1,2 or 3
+    },
+    {
+        'onlineAcc': False,
+	'dob':'31/12/1998',
+        #'username':None,
+        #'password': None,
+	'pan':'AAAPL1234Z',
+ 	'cname':'Iswarya',
+        'contact':[
+            {'email':'sankaraniswarya@gmail.com','mobile':'9500096140'}
+        ],
+        'cif':'6000000506', #format-10 digits long
+        'account':
+           [ {'number':'12345678910','type':'Savings','balance':70000,'minlimit':2000,'debitcardno':9391500235982549,'branch':'Avadi','ifsc':'IBOB0002201',
+  'transaction':[{'date':'','toacc':'12345678906','amt':2000},{'date':'','toacc':'12345678901','amt':5000}]}]
+
+         #format-11 digits long, starting with 1,2 or 3
     }
 ]).run()
-
-'''
 customer.sync().run()
 print(r.db('bank').table('customer').run())
 '''checked=False                                                                                                                                                                       

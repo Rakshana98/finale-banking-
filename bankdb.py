@@ -1,6 +1,6 @@
 import rethinkdb as r
 connection=r.connect( "localhost", 28015).repl()
-#r.db_drop('bank').run()
+# r.db_drop('bank').run()
 r.db_create('bank').run()
 
 bank=r.db('bank')
@@ -104,26 +104,26 @@ r.db('bank').table('customer').insert([
     }
 ]).run()
 customer.sync().run()
-print(r.db('bank').table('customer').run())
-checked=False
-#connection = r.connect(host=localhost, port=RDB_PORT)
-bank=r.db('bank')
-customer=bank.table('customer')
-phone='9655496644'
-mail='rakshanadevi98@gmail.com'
-cif_exists=customer.filter({"cif":"6000000502"}).distinct().run()
-print(cif_exists)
-    #cif_exists=cif_result['cif']
-if(cif_exists!=None):
-    for each_cus in cif_exists:
-        print(each_cus['contact'][0]['mobile'])
-        print(each_cus['contact'][0]['email'])
-        if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail):
-            onlineAcc_exists=each_cus['onlineAcc']
-            print(onlineAcc_exists)
-            if(onlineAcc_exists==False):
-                    checked=True
-                    print("True check",checked)
-            else:
-                    checked= False
-print( checked)
+# print(r.db('bank').table('customer').run())
+# checked=False
+# #connection = r.connect(host=localhost, port=RDB_PORT)
+# bank=r.db('bank')
+# customer=bank.table('customer')
+# phone='9655496644'
+# mail='rakshanadevi98@gmail.com'
+# cif_exists=customer.filter({"cif":"6000000502"}).distinct().run()
+# print(cif_exists)
+#     #cif_exists=cif_result['cif']
+# if(cif_exists!=None):
+#     for each_cus in cif_exists:
+#         print(each_cus['contact'][0]['mobile'])
+#         print(each_cus['contact'][0]['email'])
+#         if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail):
+#             onlineAcc_exists=each_cus['onlineAcc']
+#             print(onlineAcc_exists)
+#             if(onlineAcc_exists==False):
+#                     checked=True
+#                     print("True check",checked)
+#             else:
+#                     checked= False
+# print( checked)

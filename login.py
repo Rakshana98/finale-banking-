@@ -514,6 +514,39 @@ def signup():
                 error='Mismatch of Details or Account already exists. Please check Your Details'
                 return render_template('signup.html',error=error)
 
+@app.route('/accountdash', methods=['POST', 'GET'])
+@login_required
+def accountdash():
+    if request.method=='GET':
+        bank=r.db('bank')
+        customer=bank.table('customer')
+        #uname=customer.filter({'username':session['username']}).pluck('username').run(connection)
+        #acc=customer.filter({'username':session['username']}).pluck({'account':[{'number','balance'}]}).run(connection)
+        cust_list=customer.filter({'username':session['username']}).distinct().run(connection)
+        uname=cust_list[0]['username']
+        num=[]
+        bal=[]
+        for each in cust_list:
+            e=[]
+            x=len(each['account'])
+            for i in range(0,x):
+                e.append(i)
+                print(e)
+            print(e)
+            for i in e:
+                q=each['account'][i]['balance']
+                w=each['account'][i]['number']
+                print(w)
+                print(q)
+                bal.append(q)
+                num.append(w)
+
+
+        print(uname)
+        # print(acc)
+        return render_template('accountdash.html',username=uname,bal=bal,num=num)
+    else:
+	    return render_template('accountdash.html')
 
 
 if __name__ == '__main__':

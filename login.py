@@ -101,7 +101,7 @@ def checkdetails(cif,phone,mail):
     #cif_exists=cif_result['cif']
     if(cif_exists!=None):
         for each_cus in cif_exists:
-            if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail):
+            if(each_cus['contact']['mobile']==phone and each_cus['contact']['email']==mail):
                 onlineAcc_exists=each_cus['onlineAcc']
                 if(onlineAcc_exists==False):
                     checked=True
@@ -119,6 +119,7 @@ def createLogin(uname,password):
     #digest.update(b)
     #hashedpw=digest.finalize()
     #print(str(hashedpw))
+    
     customer.filter(r.row["cif"]==cif).update({'username':uname,'password':password,'onlineAcc':True}).run(connection)
     customer.sync().run(connection)
     check=customer.filter({"cif":cif}).pluck('onlineAcc').run(connection)
@@ -139,7 +140,7 @@ def foruid(cif,phone,mail):
     #cif_exists=cif_result['cif']
     if(cif_exists!=None):
         for each_cus in cif_exists:
-            if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail):
+            if(each_cus['contact']['mobile']==phone and each_cus['contact']['email']==mail):
                 onlineAcc_exists=each_cus['onlineAcc']
                 if(onlineAcc_exists==True):
                     session['mailid']=mail
@@ -179,11 +180,23 @@ def credset():
                 flash(error4)
             return render_template('setpass.html')
         else:
-            if(createLogin(user,password) is True):
-                flash("Account has been created. You can now login")
-                return redirect(url_for('login'))
+            bank=r.db('bank')
+            customer=bank.table('customer')
+            existing_records=customer.filter({'username':user}).run(connection)
+            check=False
+            for each in existing_records:
+                check=True
+            if(check==False):
+                if(createLogin(user,password) is True):
+                    flash("Account has been created. You can now login")
+                    return redirect(url_for('login'))
+                else:
+                    error='Mismatch of Details or Account already exists. Please check Your Details'
+                    return render_template('setpass.html',error=error)
             else:
-                error='Mismatch of Details or Account already exists. Please check Your Details'
+                error='Username already taken. Please try another name'
+                flash(error)
+                print(error)
                 return render_template('setpass.html',error=error)
 
 def getUnameByCif(cif):
@@ -194,6 +207,13 @@ def getUnameByCif(cif):
     for each in uname:
         username=each['username']
     return username
+def getCnameByUname(user):
+    bank=r.db('bank')
+    customer=bank.table('customer')
+    cname_list=customer.filter({'username':user}).pluck('cname').run(connection)
+    for each in cname_list:
+        cname=each['cname']
+    return cname
 
 
 @app.route('/otpuid',methods=['GET','POST'])
@@ -306,7 +326,7 @@ def forpass(userid,cif,phone,mail):
     #cif_exists=cif_result['cif']
     if(cif_exists!=None):
         for each_cus in cif_exists:
-            if(each_cus['contact'][0]['mobile']==phone and each_cus['contact'][0]['email']==mail and each_cus['username']==userid):
+            if(each_cus['contact']['mobile']==phone and each_cus['contact']['email']==mail and each_cus['username']==userid):
                 onlineAcc_exists=each_cus['onlineAcc']
                 if(onlineAcc_exists==True):
                     checked=True
@@ -401,26 +421,57 @@ def changepass():
 @login_required
 def editprof():
     if request.method=='POST':
+        user=request.args.get('user')
+        bank=r.db('bank')
+        customer=bank.table('customer')
+        mobile=request.form['phone']
+        email=request.form['mail']
+        if(len(mobile)!=0):
+            customer.filter(r.row["username"]==user).update({'contact':{'mobile':mobile}}).run(connection)
+        if(len(email)!=0):
+            customer.filter(r.row["username"]==user).update({'contact':{'email':email}}).run(connection)
+        if(len(email)==0 and len(mobile)==0):
+            pass
         #update Database
         return redirect(url_for('profile'))
     else:
-        return render_template('editprof.html')
+        user=request.args.get('user')
+        cif=request.args.get('cif')
+        dob=request.args.get('dob')
+        cname=request.args.get('cname')
+        return render_template('editprof.html',user=user,cif=cif,dob=dob,cname=cname)
+def getProfileDetails(user):
+    bank=r.db('bank')
+    customer=bank.table('customer')
+    record=customer.filter({"username":user}).run(connection)
+    details={}
+    for each in record:
+        details['cname']=each['cname']
+        details['cif']=each['cif']
+        details['mobile']=each['contact']['mobile']
+        details['email']=each['contact']['email']
+        details['dob']=each['dob']
+    return details
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
+    user=session['username']
+    details=getProfileDetails(user)
     if request.method=='GET':
         #db get data
-        return render_template('profile.html')
+        return render_template('profile.html',username=user,cif=details['cif'],mobile=details['mobile'],email=details['email'],dob=details['dob'],cname=details['cname'])
     else:
-        return redirect(url_for('editprof'))
+        #user=session['username']
+        return redirect(url_for('editprof',user=user,cif=details['cif'],dob=details['dob'],cname=details['cname']))
 
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     if 'username' in session:
         username=session['username']
-        return render_template('dash2.html',username=username)
+        cname=getCnameByUname(username)
+        return render_template('dash2.html',cname=cname)
     global message
     message='You need to login first.'
     return redirect(url_for('login'))

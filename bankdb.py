@@ -17,6 +17,7 @@ r.db('bank').table('customer').insert([
         #'password': None,
         'pan':'AAAPL1234C',
  	    'cname':'Pavarakshana',
+        'address' : None,
         'contact':
         {
             'email':'rakshanadevi98@gmail.com',
@@ -39,20 +40,23 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'25/10/2016',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
                         'date':'07/08/2016',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':5000
                     },
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'fromacc':'12345678906',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
-            }, 				 
+            },
             {
                 'number':'12345678902',
                 'type':'Current',
@@ -66,17 +70,20 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'08/08/2017',
                         'toacc':'12345678901',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
                         'date':'02/04/2017',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':5000
                     },
                     {
                         'date':'01/06/2017',
                         'fromacc':'12345678901',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
             }
@@ -89,6 +96,7 @@ r.db('bank').table('customer').insert([
         #'password': None,
 	    'pan':'AAAPL1234D',#10 characters
  	    'cname':'Eshu Diamond',
+        'address' : None,
         'contact':
             {
                 'email':'eshwar.muthusamy7@gmail.com',
@@ -110,17 +118,20 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'05/05/2017',
                         'toacc':'12345678905',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
                         'date':'05/08/2017',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':5000
-                    },    
+                    },
                     {
                         'date':'03/07/2017',
                         'fromacc':'12345678902',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
             },
@@ -137,17 +148,20 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'03/07/2016',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':5000
-                    },    
+                    },
                     {
                         'date':'01/07/2017',
                         'fromacc':'12345678906',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
             },
@@ -169,6 +183,7 @@ r.db('bank').table('customer').insert([
         #'password': None,
 	    'pan':'AAAPL1234E',
  	    'cname':'Deepak Vengatesh',
+        'address' : None,
         'contact':
         {
             'email':'drdeepakvenky@gmail.com',
@@ -190,17 +205,20 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'01/02/2017',
                         'toacc':'12345678903',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
                         'date':'02/03/2017',
                         'toacc':'12345678904',
+                        'fromacc':'None',
                         'amt':5000
-                    },    
+                    },
                     {
                         'date':'03/04/2017',
                         'fromacc':'12345678902',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
             },
@@ -217,17 +235,20 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'04/05/2017',
                         'toacc':'12345678901',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
                         'date':'05/06/2017',
                         'toacc':'12345678901',
+                        'fromacc':'None',
                         'amt':5000
-                    },    
+                    },
                     {
                         'date':'06/07/2017',
                         'fromacc':'12345678902',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
             }
@@ -240,6 +261,7 @@ r.db('bank').table('customer').insert([
         #'password': None,
 	    'pan':'AAAPL1234R',
  	    'cname':'Dharaa',
+        'address' : None,
         'contact':
         {
             'email':'rcdharaa@gmail.com',
@@ -261,17 +283,20 @@ r.db('bank').table('customer').insert([
                     {
                         'date':'04/08/2017',
                         'toacc':'12345678903',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
                         'date':'05/11/2017',
                         'toacc':'12345678901',
+                        'fromacc':'None',
                         'amt':5000
                     },
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'fromacc':'12345678903',
-                        'amt':10000 
+                        'toacc':'None',
+                        'amt':10000
                     }
                 ]
             }
@@ -284,6 +309,7 @@ r.db('bank').table('customer').insert([
         #'password': None,
 	    'pan':'AAAPL1234W',
  	    'cname':'Janani',
+        'address' : None,
         'contact':
         {
             'email':'kumarakrishnanjanani@gmail.com',
@@ -291,7 +317,7 @@ r.db('bank').table('customer').insert([
         },
         'cif':'6000000505', #format-10 digits long
         'account':
-        [ 
+        [
             {
                 'number':'12345678909',
                 'type':'Savings',
@@ -303,13 +329,15 @@ r.db('bank').table('customer').insert([
                 'transaction':
                 [
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'toacc':'12345678901',
+                        'fromacc':'None',
                         'amt':5000
                     }
                 ]
@@ -325,6 +353,7 @@ r.db('bank').table('customer').insert([
         #'password': None,
 	    'pan':'AAAPL1234Z',
  	    'cname':'Iswarya',
+        'address' : None,
         'contact':
         {
             'email':'sankaraniswarya@gmail.com',
@@ -332,7 +361,7 @@ r.db('bank').table('customer').insert([
         },
         'cif':'6000000506', #format-10 digits long
         'account':
-        [ 
+        [
             {
                 'number':'12345678910',
                 'type':'Savings',
@@ -344,13 +373,15 @@ r.db('bank').table('customer').insert([
                 'transaction':
                 [
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'toacc':'12345678906',
+                        'fromacc':'None',
                         'amt':2000
                     },
                     {
-                        'date':'',
+                        'date':'07/08/2016',
                         'toacc':'12345678901',
+                        'fromacc':'None',
                         'amt':5000
                     }
                 ]

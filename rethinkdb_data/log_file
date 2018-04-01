@@ -98,3 +98,9 @@
 2018-03-20T12:44:51.074289000 174.949501s notice: All client connections closed.
 2018-03-20T12:44:51.074307000 174.949518s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
 2018-03-20T12:44:51.083220000 174.958392s notice: Storage engine shut down.
+2018-04-01T22:26:11.486135623 0.081240s notice: Recursively removing directory /home/deepak/Documents/The Bank/finale-banking-/rethinkdb_data/tmp
+2018-04-01T22:26:11.588575674 0.183680s notice: Running rethinkdb 2.3.6~0xenial (GCC 5.3.1)...
+2018-04-01T22:26:11.591291395 0.186397s notice: Running on Linux 4.4.0-116-generic x86_64
+2018-04-01T22:26:11.591350008 0.186454s notice: Loading data from directory /home/deepak/Documents/The Bank/finale-banking-/rethinkdb_data
+2018-04-01T22:26:11.759115633 0.354220s info: Automatically using cache size of 3057 MB
+2018-04-01T22:26:11.808447605 0.403552s error: TCP socket creation failed for port 29015: Address already in use.

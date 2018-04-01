@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+.w3-sidebar {width: 120px;background: #222;}
+
+#main {margin-left: 120px}
+</style>
+<body class="w3-black">
+
+<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
+  <a href="#" class="w3-bar-item w3-button w3-padding-large w3-black">
+    <i class="fa fa-home w3-xxlarge"></i>
+    <p>Home</p>
+  </a>
+  <a href="/profile" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-user w3-xxlarge"></i>
+    <p>profile</p>
+  </a>
+  <a href="/accountdash" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-eye w3-xxlarge"></i>
+    <p>Accounts</p>
+  </a>
+
+
+<a href="/alerts" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+
+<i class="fa fa-envelope w3-xxlarge"></i>
+  <p>Alerts</p>
+</a>
+<a href="/messages" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+
+<i class="fa fa-envelope w3-xxlarge"></i>
+  <p>Messages</p>
+</a>
+
+  <a href="/logout" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+
+<i class="fa fa-close w3-xxlarge"></i>
+    <p>Logout</p>
+  </a>
+
+
+</nav>
+
+<div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
+  <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
+    <a href="/index" class="w3-bar-item w3-button" style="width:25% !important">Home</a>
+    <a href="/profile" class="w3-bar-item w3-button" style="width:25% !important">Profile</a>
+    <a href="/accountdash" class="w3-bar-item w3-button" style="width:25% !important">Accounts</a>
+    <a href="#photos" class="w3-bar-item w3-button" style="width:25% !important">Alerts</a>
+    <a href="/messages" class="w3-bar-item w3-button" style="width:25% !important">Accounts</a>
+    <a href="/logout" class="w3-bar-item w3-button" style="width:25% !important">logout</a>
+  </div>
+</div>
+
+<div class="w3-padding-large" id="main">
+
+  <header class="w3-container w3-padding-32 w3-center w3-black" id="home">
+    <h1 class="w3-jumbo"><span class="w3-hide-small">Hey </span>{{uname}} !</h1>
+    <h3><p> Your Transactions</p></h3>
+
+<br>
+<br>
+<br>
+<div align="center" cellspacing="100">
+<table>
+<tr><th>Date</th>
+<th> From Account </th>
+<th> To Account </th>
+<th> Amount </th>
+</tr>
+
+  {% for i in range(0,sz) %}
+        <tr>
+
+          <center>  <td style="padding:0 15px 0 15px;" align="center"> <h3>{{ dat[i] }}</h3></td></center>
+            <center><td style="padding:0 15px 0 15px;" align="center"><h3>{{ fromacc[i] }}</h3></td></center>
+            <center><td style="padding:0 15px 0 15px;" align="center"><h3>{{ amt[i] }}</h3></td></center>
+            <center><td style="padding:0 15px 0 15px;" align="center"><h3>{{ toacc[i] }}</h3></td></center>
+
+
+        </tr>
+{% endfor %}
+
+
+
+
+</table>
+</div>
+</header>
+</div>
+</body>
+</html>
